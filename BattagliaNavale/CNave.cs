@@ -29,10 +29,6 @@ namespace BattagliaNavale
                 for (int y = yStart; y <= yEnd; y++)
                     locazione.Add((c1.x, y));
             }
-            else
-            {
-                throw new Exception("La nave deve essere orizzontale o verticale!");
-            }
         }
     }
 }

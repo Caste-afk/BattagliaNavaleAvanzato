@@ -16,5 +16,12 @@ namespace BattagliaNavale
         {
             InitializeComponent();
         }
-    }
+
+        private void btn_1v0_Click(object sender, EventArgs e)
+        {
+            FPosizioneBasi nuovoForm = new FPosizioneBasi();
+            nuovoForm.Show();
+            this.Hide();
+        }
+}
 }
