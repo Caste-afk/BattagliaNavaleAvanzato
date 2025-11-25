@@ -11,10 +11,13 @@ namespace BattagliaNavale
 {
     public partial class FPosizioneBasi : Form
     {
+        public event EventHandler<string> scrivi;
+
         private bool primo;// serve per indicare se è la prima coordinata della nave
         private List<CNave> navi;
         private List<int> lunghezzaNavi;
         private int x1, y1;
+        CGiocatore player;
 
         public FPosizioneBasi()
         {
@@ -92,7 +95,7 @@ namespace BattagliaNavale
 
             foreach (CNave nave in navi)
             {
-                foreach (var coord in nave.Locazione)
+                foreach (var coord in nave.locazione)
                 {
                     dgv_Main.Rows[coord.Item1].Cells[coord.Item2].Style.BackColor = Color.LightGreen;
                 }
@@ -101,8 +104,18 @@ namespace BattagliaNavale
 
         private void btn_invia_Click(object sender, EventArgs e)
         {
-
+            player = new CGiocatore(navi);
+            FMainBattaglia battaglia = new FMainBattaglia(dgv_Main, player);
+            battaglia.Show();
+            this.Close();
         }
+
+        private void lbl_quit_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
         private void dgv_Main_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (lunghezzaNavi.Count ==0)
@@ -117,12 +130,14 @@ namespace BattagliaNavale
             else
             {
                 CNave nave = new CNave((x1, y1), (e.RowIndex, e.ColumnIndex));
-                if (nave.Locazione.Count != lunghezzaNavi[0])
+                if (nave.locazione.Count != lunghezzaNavi[0])
                 {
                     MessageBox.Show($"La nave deve essere lunga {lunghezzaNavi[0]} celle!");
                     primo = true;
                     return;
                 }
+                scrivi?.Invoke(this, $"Nave lunga {lunghezzaNavi[0]}. Inizio a {x1}, {y1}; fine a {e.RowIndex}, {e.ColumnIndex}");
+
                 navi.Add(nave);
                 lunghezzaNavi.RemoveAt(0);
                 ColoraNavi();

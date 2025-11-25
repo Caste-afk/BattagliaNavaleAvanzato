@@ -3,14 +3,15 @@ using System.Collections.Generic;
 
 namespace BattagliaNavale
 {
-    internal class CNave
+    public
+         class CNave
     {
-        private List<(int x, int y)> locazione = new List<(int x, int y)>();
-
-        public List<(int x, int y)> Locazione => locazione;
+        public List<(int x, int y)> locazione { get; private set; }
 
         public CNave((int x, int y) c1, (int x, int y) c2)
         {
+            locazione = new List<(int x, int y)>();
+
             // Se la nave è orizzontale
             if (c1.y == c2.y)
             {
@@ -29,6 +30,14 @@ namespace BattagliaNavale
                 for (int y = yStart; y <= yEnd; y++)
                     locazione.Add((c1.x, y));
             }
+        }
+
+        public bool Colpito((int x, int y)c)
+        {
+
+            locazione.Remove(c);
+
+            return locazione.Count == 0;
         }
     }
 }
