@@ -13,19 +13,26 @@ namespace BattagliaNavale
 {
     public partial class Form1 : Form
     {
+        
+        private FPosizioneBasi posizioneBasi;
+        public FMainBattaglia mainBattaglia;
+
         public Form1()
         {
             InitializeComponent();
-            ReimpostaTesto();
         }
 
         private void btn_1v0_Click(object sender, EventArgs e)
         {
-            FPosizioneBasi nuovoForm = new FPosizioneBasi();
+            posizioneBasi = new FPosizioneBasi();
+            mainBattaglia = new FMainBattaglia();
 
-            nuovoForm.scrivi += scriviLogs;
+            posizioneBasi.inviaGiocatore += mainBattaglia.RiceviGiocatore;
+            posizioneBasi.inviaDataGridView += mainBattaglia.RiceviDataGridView;
 
-            DialogResult result = nuovoForm.ShowDialog();
+            posizioneBasi.SetBattaglia(mainBattaglia);
+
+            DialogResult result = posizioneBasi.ShowDialog();
 
             if (result == DialogResult.OK)
             {
@@ -34,31 +41,6 @@ namespace BattagliaNavale
             this.Hide();
         }
 
-        private void ReimpostaTesto()
-        {
-            string dir = Path.Combine(Application.StartupPath, "data");
-            Directory.CreateDirectory(dir);
-            string path = Path.Combine(dir, "Log.txt");
-            using (StreamWriter sw = new StreamWriter(path))
-            {
-                sw.WriteLine("");
-            }
-        }
-
-
-        private void scrittore(string testo)
-        {
-            string dir = Path.Combine(Application.StartupPath, "data");
-            Directory.CreateDirectory(dir);
-            string path = Path.Combine(dir, "Log.txt");
-
-            File.AppendAllText(path, testo + Environment.NewLine);
-        }
-
-        private void scriviLogs(object sender, string testo)
-        {
-            scrittore(testo);
-        }
 
     }
 }

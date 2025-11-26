@@ -36,6 +36,7 @@
             this.lbl_Colpito = new System.Windows.Forms.Label();
             this.dgv_CPU = new System.Windows.Forms.DataGridView();
             this.lbx_Main = new System.Windows.Forms.ListBox();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_CPU)).BeginInit();
             this.SuspendLayout();
@@ -44,7 +45,7 @@
             // 
             this.dgv_Main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_Main.Location = new System.Drawing.Point(22, 142);
-            this.dgv_Main.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgv_Main.Margin = new System.Windows.Forms.Padding(4);
             this.dgv_Main.Name = "dgv_Main";
             this.dgv_Main.RowHeadersWidth = 72;
             this.dgv_Main.RowTemplate.Height = 31;
@@ -110,7 +111,7 @@
             // 
             this.dgv_CPU.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_CPU.Location = new System.Drawing.Point(1703, 142);
-            this.dgv_CPU.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgv_CPU.Margin = new System.Windows.Forms.Padding(4);
             this.dgv_CPU.Name = "dgv_CPU";
             this.dgv_CPU.RowHeadersWidth = 72;
             this.dgv_CPU.RowTemplate.Height = 31;
@@ -127,11 +128,23 @@
             this.lbx_Main.Size = new System.Drawing.Size(1200, 304);
             this.lbx_Main.TabIndex = 9;
             // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("MV Boli", 14.25F, System.Drawing.FontStyle.Bold);
+            this.button1.Location = new System.Drawing.Point(1211, 945);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(389, 160);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "CHIUDI!";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FMainBattaglia
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2884, 1748);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.lbx_Main);
             this.Controls.Add(this.dgv_CPU);
             this.Controls.Add(this.lbl_Colpito);
@@ -140,7 +153,7 @@
             this.Controls.Add(this.lbl_Campo2);
             this.Controls.Add(this.lbl_Campo1);
             this.Controls.Add(this.dgv_Main);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "FMainBattaglia";
             this.Text = "FMainBattaglia";
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Main)).EndInit();
@@ -160,5 +173,6 @@
         private System.Windows.Forms.Label lbl_Colpito;
         private System.Windows.Forms.DataGridView dgv_CPU;
         private System.Windows.Forms.ListBox lbx_Main;
+        private System.Windows.Forms.Button button1;
     }
 }

@@ -30,52 +30,39 @@
         {
             this.lbl_Titolo = new System.Windows.Forms.Label();
             this.btn_1v0 = new System.Windows.Forms.Button();
-            this.btn_1v1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lbl_Titolo
             // 
             this.lbl_Titolo.AutoSize = true;
             this.lbl_Titolo.Font = new System.Drawing.Font("MV Boli", 18F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Titolo.Location = new System.Drawing.Point(103, 75);
-            this.lbl_Titolo.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lbl_Titolo.Location = new System.Drawing.Point(206, 144);
+            this.lbl_Titolo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbl_Titolo.Name = "lbl_Titolo";
-            this.lbl_Titolo.Size = new System.Drawing.Size(282, 31);
+            this.lbl_Titolo.Size = new System.Drawing.Size(543, 63);
             this.lbl_Titolo.TabIndex = 0;
             this.lbl_Titolo.Text = "BATTAGLIA NAVALE!";
             // 
             // btn_1v0
             // 
             this.btn_1v0.Font = new System.Drawing.Font("MV Boli", 14.14286F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_1v0.Location = new System.Drawing.Point(31, 166);
-            this.btn_1v0.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btn_1v0.Location = new System.Drawing.Point(293, 269);
+            this.btn_1v0.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btn_1v0.Name = "btn_1v0";
-            this.btn_1v0.Size = new System.Drawing.Size(187, 89);
+            this.btn_1v0.Size = new System.Drawing.Size(374, 171);
             this.btn_1v0.TabIndex = 1;
-            this.btn_1v0.Text = "Giocatore singolo";
+            this.btn_1v0.Text = "Gioca!";
             this.btn_1v0.UseVisualStyleBackColor = true;
             this.btn_1v0.Click += new System.EventHandler(this.btn_1v0_Click);
             // 
-            // btn_1v1
-            // 
-            this.btn_1v1.Font = new System.Drawing.Font("MV Boli", 14.14286F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_1v1.Location = new System.Drawing.Point(257, 166);
-            this.btn_1v1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.btn_1v1.Name = "btn_1v1";
-            this.btn_1v1.Size = new System.Drawing.Size(187, 89);
-            this.btn_1v1.TabIndex = 2;
-            this.btn_1v1.Text = "1 V.S. 1";
-            this.btn_1v1.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(517, 378);
-            this.Controls.Add(this.btn_1v1);
+            this.ClientSize = new System.Drawing.Size(1034, 727);
             this.Controls.Add(this.btn_1v0);
             this.Controls.Add(this.lbl_Titolo);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -87,7 +74,6 @@
 
         private System.Windows.Forms.Label lbl_Titolo;
         private System.Windows.Forms.Button btn_1v0;
-        private System.Windows.Forms.Button btn_1v1;
     }
 }
 

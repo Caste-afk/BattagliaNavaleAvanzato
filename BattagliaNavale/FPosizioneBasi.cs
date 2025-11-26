@@ -11,7 +11,10 @@ namespace BattagliaNavale
 {
     public partial class FPosizioneBasi : Form
     {
-        public event EventHandler<string> scrivi;
+
+        public event EventHandler<CGiocatore> inviaGiocatore;
+        public event EventHandler<DataGridView> inviaDataGridView;
+        private FMainBattaglia battaglia;
 
         private bool primo;// serve per indicare se è la prima coordinata della nave
         private List<CNave> navi;
@@ -32,6 +35,12 @@ namespace BattagliaNavale
             ImpostaDGV();
             AggiornaScritte();
         }
+
+        public void SetBattaglia(FMainBattaglia b)
+        {
+            battaglia = b;
+        }
+    
         private void ImpostaDGV()
         {
             string lettere = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -105,10 +114,14 @@ namespace BattagliaNavale
         private void btn_invia_Click(object sender, EventArgs e)
         {
             player = new CGiocatore(navi);
-            FMainBattaglia battaglia = new FMainBattaglia(dgv_Main, player);
-            battaglia.Show();
+
+            inviaGiocatore?.Invoke(this, player);
+            inviaDataGridView?.Invoke(this, dgv_Main);
+
+            battaglia.ShowDialog();
             this.Close();
         }
+
 
         private void lbl_quit_Click(object sender, EventArgs e)
         {
@@ -136,7 +149,6 @@ namespace BattagliaNavale
                     primo = true;
                     return;
                 }
-                scrivi?.Invoke(this, $"Nave lunga {lunghezzaNavi[0]}. Inizio a {x1}, {y1}; fine a {e.RowIndex}, {e.ColumnIndex}");
 
                 navi.Add(nave);
                 lunghezzaNavi.RemoveAt(0);

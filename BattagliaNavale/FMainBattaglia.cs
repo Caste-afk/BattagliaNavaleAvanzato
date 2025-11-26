@@ -12,11 +12,13 @@ namespace BattagliaNavale
 {
     public partial class FMainBattaglia : Form
     {
+
         private bool turno;//true = attacco del giocatore
         private CGiocatore player;
         private CGiocatore nemico;
         private int naviCpuAffondate;
         private int naviPlayerAffondate;
+        //private DataGridView d1;
 
         // Campi per la logica del bot
         private List<(int x, int y)> celleColpite;
@@ -24,11 +26,12 @@ namespace BattagliaNavale
         private (int x, int y)? ultimoColpo;
         private bool modalitaCaccia;
 
-        public FMainBattaglia(DataGridView d1, CGiocatore player)
+        public FMainBattaglia()
         {
             InitializeComponent();
-            ImpostaDGV(dgv_Main, d1);
-            ImpostaDGV(dgv_CPU, d1);
+            
+            MettiMusica(3);
+
             CreaCampoCPU();
             this.player = player;
             naviCpuAffondate = 0;
@@ -39,6 +42,19 @@ namespace BattagliaNavale
             ultimoColpo = null;
             modalitaCaccia = false;//ha colpito la nave e la sta cercando
         }
+
+
+        public void RiceviGiocatore(object sender, CGiocatore player)
+        {
+            this.player = player;
+        }
+
+        public void RiceviDataGridView(object sender, DataGridView dgv)
+        {
+            ImpostaDGV(dgv_Main, dgv);
+            ImpostaDGV(dgv_CPU, dgv);
+        }
+
 
         private void ImpostaDGV(DataGridView target, DataGridView source)
         {
@@ -211,8 +227,13 @@ namespace BattagliaNavale
             return naveAffondata;
         }
 
-        private void dgv_CPU_CellClick(object sender, DataGridViewCellEventArgs e)
+        private async void dgv_CPU_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Tag == "cliccato")
+            {
+                return;
+            }
+
             CNave naveAffondata = VerificaColpo(nemico, e.RowIndex, e.ColumnIndex, (DataGridView)sender);
 
             if (naveAffondata != null)
@@ -224,13 +245,17 @@ namespace BattagliaNavale
                 if (nemico.navi.Count == 0)
                 {
                     MessageBox.Show("Hai vinto! Tutte le navi nemiche sono affondate!");
+                    Application.Exit();
                     return;
                 }
             }
 
+            await Task.Delay(500);
+
             // Turno della CPU
             CapisciDoveAttaccare();
         }
+
 
         private void CapisciDoveAttaccare()
         {
@@ -322,6 +347,8 @@ namespace BattagliaNavale
             target.Rows[r].Cells[c].Style.BackColor = Color.Red;
             target.Rows[r].Cells[c].Style.ForeColor = Color.White;
             target.Rows[r].Cells[c].Value = "X";
+            target.Rows[r].Cells[c].Tag = "cliccato";
+            MettiMusica(1);
             lbx_Main.Items.Add( $"Colpito a {r}, {c}!") ;
         }
 
@@ -330,7 +357,34 @@ namespace BattagliaNavale
             target.Rows[r].Cells[c].Style.BackColor = Color.LightBlue;
             target.Rows[r].Cells[c].Style.ForeColor = Color.White;
             target.Rows[r].Cells[c].Value = "O";
+            target.Rows[r].Cells[c].Tag = "cliccato";
+            MettiMusica(0);
             lbx_Main.Items.Add($"Acqua!");
         }
+
+        private void MettiMusica(int n)
+        {
+            //0 = acqua
+            //1 = colpito
+            //2 = affondato
+            //3 = musica di sottofondo
+            string path = @"suoni\";
+            if (n != 3)
+            {
+                System.Media.SoundPlayer musica = new System.Media.SoundPlayer($"{path}{n}.wav");
+                musica.Play();
+            }
+            else
+            {
+                System.Media.SoundPlayer musica = new System.Media.SoundPlayer($"{path}{n}.wav");
+                musica.PlayLooping();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
     }
 }
