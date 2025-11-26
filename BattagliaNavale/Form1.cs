@@ -48,7 +48,6 @@ namespace BattagliaNavale
 
         private void scrittore(string testo)
         {
-            // Assicura che la cartella esista e usa Path.Combine
             string dir = Path.Combine(Application.StartupPath, "data");
             Directory.CreateDirectory(dir);
             string path = Path.Combine(dir, "Log.txt");

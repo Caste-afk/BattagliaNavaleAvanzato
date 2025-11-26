@@ -12,10 +12,17 @@ namespace BattagliaNavale
 {
     public partial class FMainBattaglia : Form
     {
+        private bool turno;//true = attacco del giocatore
         private CGiocatore player;
         private CGiocatore nemico;
         private int naviCpuAffondate;
         private int naviPlayerAffondate;
+
+        // Campi per la logica del bot
+        private List<(int x, int y)> celleColpite;
+        private List<(int x, int y)> celleInAttesa;
+        private (int x, int y)? ultimoColpo;
+        private bool modalitaCaccia;
 
         public FMainBattaglia(DataGridView d1, CGiocatore player)
         {
@@ -26,6 +33,11 @@ namespace BattagliaNavale
             this.player = player;
             naviCpuAffondate = 0;
             naviPlayerAffondate = 0;
+
+            celleColpite = new List<(int x, int y)>();
+            celleInAttesa = new List<(int x, int y)>();//celle da colpire per cercare la nave
+            ultimoColpo = null;
+            modalitaCaccia = false;//ha colpito la nave e la sta cercando
         }
 
         private void ImpostaDGV(DataGridView target, DataGridView source)
@@ -125,9 +137,10 @@ namespace BattagliaNavale
                         navi.Add(nuovaNave);
                         posizionata = true;
                     }
-                    nemico = new CGiocatore(navi);
                 }
             }
+
+            nemico = new CGiocatore(navi);
         }
 
         private bool PosizionamentoValido((int x, int y) c1, (int x, int y) c2, List<CNave> naviEsistenti)
@@ -141,6 +154,7 @@ namespace BattagliaNavale
                 for (int x = xStart; x <= xEnd; x++)
                     celleDaOccupare.Add((x, c1.y));
             }
+
             else if (c1.x == c2.x)
             {
                 int yStart = Math.Min(c1.y, c2.y);
@@ -160,74 +174,8 @@ namespace BattagliaNavale
                 }
             }
 
-            return true;
+            return true; 
         }
-
-        #region comportamento campo del bot
-
-        private void dgv_CPU_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            CNave naveAffondata = VerificaColpo(nemico, e.RowIndex, e.ColumnIndex, (DataGridView)sender);
-
-            if (naveAffondata != null)
-            {
-                nemico.navi.Remove(naveAffondata);
-                MessageBox.Show("Nave affondata!");
-                naviCpuAffondate++;
-                lbl_NaviRimaste.Text = $"Navi affondate: {naviCpuAffondate}";
-
-                if (nemico.navi.Count == 0)
-                {
-                    MessageBox.Show("Hai vinto! Tutte le navi nemiche sono affondate!");
-                }
-            }
-            AttaccoCPU();
-        }
-
-
-        private void Colpito(DataGridView target, int r, int c)
-        {
-            target.Rows[r].Cells[c].Style.BackColor = Color.Red;
-        }
-
-        private void Mancato(DataGridView target, int r, int c)
-        {
-            target.Rows[r].Cells[c].Style.BackColor = Color.LightBlue;
-        }
-        #endregion
-
-
-        #region bot che colpisce il campo del giocatore
-
-
-        private void AttaccoCPU()
-        {
-            Random rnd = new Random();
-            int riga = rnd.Next(0, 10);
-            int colonna = rnd.Next(0, 10);
-
-            CNave naveAffondata = VerificaColpo(player, riga, colonna, dgv_Main);
-
-            if (naveAffondata != null)
-            {
-                player.navi.Remove(naveAffondata);
-                MessageBox.Show("La CPU ha affondato una tua nave!");
-                naviPlayerAffondate++;
-
-                if (player.navi.Count == 0)
-                {
-                    MessageBox.Show("Hai perso! Tutte le tue navi sono affondate!");
-                }
-            }
-        }
-
-        private void CapisciDoveAttaccare(int x, int y)
-        {
-
-        }
-
-
-        #endregion
 
         private CNave VerificaColpo(CGiocatore bersaglio, int riga, int colonna, DataGridView target)
         {
@@ -244,7 +192,7 @@ namespace BattagliaNavale
                         Colpito(target, riga, colonna);
 
                         bool affondata = n.Colpito((riga, colonna));
-
+                        
                         if (affondata)
                         {
                             naveAffondata = n;
@@ -263,5 +211,126 @@ namespace BattagliaNavale
             return naveAffondata;
         }
 
+        private void dgv_CPU_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            CNave naveAffondata = VerificaColpo(nemico, e.RowIndex, e.ColumnIndex, (DataGridView)sender);
+
+            if (naveAffondata != null)
+            {
+                nemico.navi.Remove(naveAffondata);
+                MessageBox.Show("Nave affondata!");
+                naviCpuAffondate++;
+
+                if (nemico.navi.Count == 0)
+                {
+                    MessageBox.Show("Hai vinto! Tutte le navi nemiche sono affondate!");
+                    return;
+                }
+            }
+
+            // Turno della CPU
+            CapisciDoveAttaccare();
+        }
+
+        private void CapisciDoveAttaccare()
+        {
+            int x, y;
+
+            if (modalitaCaccia && celleInAttesa.Count > 0)
+            {
+                //cerca la cella
+                var prossimaCella = celleInAttesa[0];
+                celleInAttesa.RemoveAt(0);
+                x = prossimaCella.x;
+                y = prossimaCella.y;
+            }
+            else
+            {
+                //cerca la cella sparando a random
+                (x, y) = TrovaCellaCasuale();
+            }
+
+            
+            CNave naveAffondata = VerificaColpo(player, x, y, dgv_Main);
+            celleColpite.Add((x, y));
+
+            if (naveAffondata != null)
+            {
+                //nave affondata e reset della modalità di ricerca
+                player.navi.Remove(naveAffondata);
+                MessageBox.Show("La CPU ha affondato una tua nave!");
+                naviPlayerAffondate++;
+                modalitaCaccia = false;
+                celleInAttesa.Clear();
+
+                if (player.navi.Count == 0)
+                {
+                    MessageBox.Show("Hai perso! Tutte le tue navi sono affondate!");
+                }
+            }
+            else if (dgv_Main.Rows[x].Cells[y].Style.BackColor == Color.Red)
+            {
+                //nave solo colpita e continua a cercarla
+                modalitaCaccia = true;
+                ultimoColpo = (x, y);
+                AggiungiCelleAdiacenti(x, y);
+            }
+            else
+            {
+                //nave mancata
+                if (!modalitaCaccia)
+                {
+                    celleInAttesa.Clear();
+                }
+            }
+        }
+
+        private void AggiungiCelleAdiacenti(int x, int y)
+        {
+            List<(int x, int y)> adiacenti = new List<(int x, int y)>//posizioni delle celle vicine
+            {
+                (x - 1, y), 
+                (x + 1, y), 
+                (x, y - 1), 
+                (x, y + 1)  
+            };
+
+            foreach (var cella in adiacenti)
+            {
+                if (cella.x >= 0 && cella.x < 10 &&
+                    cella.y >= 0 && cella.y < 10 &&
+                    !celleColpite.Contains(cella) &&
+                    !celleInAttesa.Contains(cella))
+                {
+                    celleInAttesa.Add(cella);
+                }
+            }
+        }
+
+        private (int x, int y) TrovaCellaCasuale()
+        {
+            Random rnd = new Random();
+            int x, y;
+            
+            x = rnd.Next(0, 10);
+            y = rnd.Next(0, 10);
+            return (x, y);
+        }
+
+        private void Colpito(DataGridView target, int r, int c)
+        {
+            target.Rows[r].Cells[c].Style.BackColor = Color.Red;
+            target.Rows[r].Cells[c].Style.ForeColor = Color.White;
+            target.Rows[r].Cells[c].Value = "X";
+            lbx_Main.Items.Add( $"Colpito a {r}, {c}!") ;
+        }
+
+        private void Mancato(DataGridView target, int r, int c)
+        {
+            target.Rows[r].Cells[c].Style.BackColor = Color.LightBlue;
+            target.Rows[r].Cells[c].Style.ForeColor = Color.White;
+            target.Rows[r].Cells[c].Value = "O";
+            lbx_Main.Items.Add($"Acqua!");
+        }
     }
 }
